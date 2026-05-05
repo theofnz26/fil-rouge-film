@@ -29,8 +29,6 @@ export default {
   <main>
     <h2>Liste des films</h2>
 
-    <p>TEST VERSION 2 FILMS</p>
-
     <p v-if="loading">Chargement des films...</p>
 
     <p v-if="error">
