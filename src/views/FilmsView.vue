@@ -1,5 +1,44 @@
-<template>
-  <h2>Liste des films</h2>
+<script>
+import axios from 'axios'
 
-  <p>Ici, j'afficherai les films de l'API.</p>
+export default {
+  data() {
+    return {
+      films: [],
+      loading: true,
+      error: null,
+    }
+  },
+
+  mounted() {
+    axios
+      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=10')
+      .then((response) => {
+        this.films = response.data.member
+        this.loading = false
+      })
+      .catch(() => {
+        this.error = "Impossible de récupérer les films."
+        this.loading = false
+      })
+  },
+}
+</script>
+
+<template>
+  <main>
+    <h2>Liste des films</h2>
+
+    <p v-if="loading">Chargement des films...</p>
+
+    <p v-if="error">
+      {{ error }}
+    </p>
+
+    <ul v-if="!loading && !error">
+      <li v-for="film in films" :key="film.id">
+        {{ film.title }} - {{ film.year }}
+      </li>
+    </ul>
+  </main>
 </template>
