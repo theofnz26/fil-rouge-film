@@ -12,7 +12,7 @@ export default {
 
   mounted() {
     axios
-      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=10')
+      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=6')
       .then((response) => {
         this.films = response.data.member
         this.loading = false
@@ -35,10 +35,20 @@ export default {
       {{ error }}
     </p>
 
-    <ul v-if="!loading && !error">
-      <li v-for="film in films" :key="film.id">
-        {{ film.title }} - {{ film.year }}
-      </li>
-    </ul>
+    <div v-if="!loading && !error">
+      <div v-for="film in films" :key="film.id">
+        <h3>{{ film.title }}</h3>
+
+        <p>Année : {{ film.year }}</p>
+
+        <img v-if="film.poster" :src="film.poster" :alt="film.title" width="150" />
+
+        <p v-if="film.plot">
+          {{ film.plot }}
+        </p>
+
+        <hr />
+      </div>
+    </div>
   </main>
 </template>
