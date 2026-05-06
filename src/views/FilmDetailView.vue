@@ -4,21 +4,23 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      films: [],
+      film: null,
       loading: true,
       error: null,
     }
   },
 
   mounted() {
+    const id = this.$route.params.id
+
     axios
-      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=2')
+      .get('http://localhost:8000/api/movies/' + id)
       .then((response) => {
-        this.films = response.data.member
+        this.film = response.data
         this.loading = false
       })
       .catch(() => {
-        this.error = "Impossible de récupérer les films."
+        this.error = "Impossible de récupérer le détail du film."
         this.loading = false
       })
   },
@@ -27,37 +29,51 @@ export default {
 
 <template>
   <main>
-    <h2>Liste des films</h2>
+    <RouterLink to="/films">
+      Retour à la liste
+    </RouterLink>
 
-    <p v-if="loading">Chargement des films...</p>
+    <p v-if="loading">Chargement du film...</p>
 
     <p v-if="error">
       {{ error }}
     </p>
 
-    <div v-if="!loading && !error">
-      <div v-for="film in films" :key="film.id">
-        <h3>{{ film.title }}</h3>
+    <div v-if="film">
+      <h2>{{ film.title }}</h2>
 
-        <p>Année : {{ film.year }}</p>
+      <p>Année : {{ film.year }}</p>
 
-        <img
-          v-if="film.poster"
-          :src="film.poster"
-          :alt="film.title"
-          width="150"
-        />
+      <img
+        v-if="film.poster"
+        :src="film.poster"
+        :alt="film.title"
+        width="200"
+      />
 
-        <p v-if="film.plot">
-          {{ film.plot }}
-        </p>
+      <p v-if="film.fullPlot">
+        {{ film.fullPlot }}
+      </p>
 
-        <RouterLink :to="'/films/' + film.id">
-          Voir le détail
-        </RouterLink>
+      <p v-if="film.imdb && film.imdb.rating">
+        Note IMDb : {{ film.imdb.rating }}
+      </p>
 
-        <hr />
-      </div>
+      <h3>Genres</h3>
+
+      <ul>
+        <li v-for="genre in film.genres" :key="genre.id">
+          {{ genre.label }}
+        </li>
+      </ul>
+
+      <h3>Réalisateur</h3>
+
+      <ul>
+        <li v-for="director in film.directors" :key="director.id">
+          {{ director.fullName }}
+        </li>
+      </ul>
     </div>
   </main>
 </template>

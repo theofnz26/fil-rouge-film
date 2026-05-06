@@ -1,7 +1,12 @@
 <script>
 import axios from 'axios'
+import MovieCard from '../components/MovieCard.vue'
 
 export default {
+  components: {
+    MovieCard,
+  },
+
   data() {
     return {
       films: [],
@@ -12,7 +17,7 @@ export default {
 
   mounted() {
     axios
-      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=2')
+      .get('http://localhost:8000/api/movies?page=1&itemsPerPage=5')
       .then((response) => {
         this.films = response.data.member
         this.loading = false
@@ -29,7 +34,9 @@ export default {
   <main>
     <h2>Liste des films</h2>
 
-    <p>TEST VERSION 2 FILMS</p>
+    <p>
+      Cette page affiche une liste de films grâce à des composants Vue.
+    </p>
 
     <p v-if="loading">Chargement des films...</p>
 
@@ -38,28 +45,11 @@ export default {
     </p>
 
     <div v-if="!loading && !error">
-      <div v-for="film in films" :key="film.id">
-        <h3>{{ film.title }}</h3>
-
-        <p>Année : {{ film.year }}</p>
-
-        <img
-          v-if="film.poster"
-          :src="film.poster"
-          :alt="film.title"
-          width="150"
-        />
-
-        <p v-if="film.plot">
-          {{ film.plot }}
-        </p>
-
-        <RouterLink :to="'/films/' + film.id">
-          Voir le détail
-        </RouterLink>
-
-        <hr />
-      </div>
+      <MovieCard
+        v-for="film in films"
+        :key="film.id"
+        :film="film"
+      />
     </div>
   </main>
 </template>
